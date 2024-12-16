@@ -5,6 +5,6 @@ account: tahaababou
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13608541
-bundleId: 9530720
+bundleId: 9534352
 url: https://tahaababou.shinyapps.io/shiny/
 version: 1

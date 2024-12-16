@@ -27,6 +27,17 @@ barbados_data <- gdp_dollars %>%
   left_join(population_growth, by = "year") %>%
   left_join(unemployment_data, by = "year")
 
+# Landmarks Data
+landmarks <- data.frame(
+  name = c("Harrison's Cave", "Carlisle Bay", "Animal Flower Cave", "St. Nicholas Abbey"),
+  lat = c(13.1667, 13.0906, 13.3289, 13.2505),
+  lng = c(-59.5833, -59.6144, -59.6483, -59.5678),
+  description = c("A natural wonder with crystallized limestone caverns.",
+                  "A beautiful bay popular for snorkeling and beach activities.",
+                  "A sea cave with natural pools and stunning ocean views.",
+                  "A historic plantation house producing rum.")
+)
+
 # Define UI
 ui <- dashboardPage(
   dashboardHeader(title = "Barbados Analysis"),
@@ -49,15 +60,20 @@ ui <- dashboardPage(
                     )
                 )
               ),
+              #fluidRow(
+              #  box(title = "Key Facts about Barbados", status = "info", solidHeader = TRUE, width = 12,
+              #      HTML(
+              #        "<ul>
+              #          <li><b>Population:</b> Approximately 282,000 residents (2023).</li>
+              #          <li><b>GDP:</b> $6.4 billion (2023).</li>
+              #          <li><b>Tourism:</b> A significant driver of the economy.</li>
+              #        </ul>"
+              #      )
+              #  )
+              #),
               fluidRow(
-                box(title = "Key Facts about Barbados", status = "info", solidHeader = TRUE, width = 12,
-                    HTML(
-                      "<ul>
-                        <li><b>Population:</b> Approximately 282,000 residents (2023).</li>
-                        <li><b>GDP:</b> $6.4 billion (2023).</li>
-                        <li><b>Tourism:</b> A significant driver of the economy.</li>
-                      </ul>"
-                    )
+                box(title = "Interactive Map: Barbados Landmarks", status = "success", solidHeader = TRUE, width = 12,
+                    leafletOutput("barbados_map", height = 400)
                 )
               ),
               fluidRow(
@@ -184,6 +200,15 @@ server <- function(input, output, session) {
         tags$p("Created by Taha Ababou - MA615 Final Project", style = "text-align: center; margin-top: 10px; font-size: 12px; color: gray;")
       )
     ))
+  })
+  
+  # Interactive Map
+  output$barbados_map <- renderLeaflet({
+    leaflet(landmarks) %>%
+      addTiles() %>%
+      addMarkers(~lng, ~lat, popup = ~paste0("<b>", name, "</b><br>", description),
+                 label = ~name) %>%
+      setView(lng = -59.5833, lat = 13.1667, zoom = 11)  # Center on Barbados
   })
   
   # Graph 1
