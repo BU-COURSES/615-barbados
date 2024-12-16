@@ -1,2 +1,2 @@
-# 615-borabora
+# 615-barbados
 MA615 Final Project - Shiny App

@@ -1,0 +1,80 @@
+library(readxl)
+library(dplyr)
+library(tidyr)
+
+barbados_all_data <- read_excel("barbados_all_data.xls")
+barbados_metadata <- read_excel("barbados_all_data.xls", 
+                                sheet = "Metadata - Indicators")
+
+# EXTRACTING POPULATION DATA
+population_rows <- barbados_metadata[grep("population", barbados_metadata$INDICATOR_NAME, ignore.case = TRUE), ]
+
+population_data <- barbados_all_data[grep("SP.POP.TOTL", barbados_all_data$`Indicator Code`, ignore.case = TRUE), ]
+
+# Isolate the row where `Indicator Name` is "Population, total"
+population_total <- population_data %>%
+  filter(`Indicator Name` == "Population, total")
+
+# Transform the data to have two columns: Year and Population
+population_total <- population_total %>%
+  pivot_longer(
+    cols = `1960`:`2023`, # Specify the columns to pivot (years)
+    names_to = "Year",    # New column for the years
+    values_to = "Population" # New column for the population values
+  ) %>%
+  select(Year, Population) # Select only the Year and Population columns
+
+
+# POPULATION GROWTH
+population_growth <- barbados_all_data[grep("SP.POP.GROW", barbados_all_data$`Indicator Code`, ignore.case = TRUE), ]
+
+# Transform the data to have two columns: Year and Population
+population_growth <- population_growth %>%
+  pivot_longer(
+    cols = `1960`:`2023`, # Specify the columns to pivot (years)
+    names_to = "Year",    # New column for the years
+    values_to = "Percentage" # New column for the percentage values
+  ) %>%
+  select(Year, Percentage) # Select only the Year and Percentage columns
+
+
+# EXTRACTING GDP DATA
+gdp_dollars <- barbados_all_data[grep("NY.GDP.MKTP.CD", barbados_all_data$`Indicator Code`, ignore.case = TRUE), ]
+
+# Transform the data to have two columns: Year and Population
+gdp_dollars <- gdp_dollars %>%
+  pivot_longer(
+    cols = `1960`:`2023`, # Specify the columns to pivot (years)
+    names_to = "Year",    # New column for the years
+    values_to = "Dollars" # New column for the dollars values
+  ) %>%
+  select(Year, Dollars) # Select only the Year and Dollars columns
+
+
+# UNEMPLOYMENT DATA
+unemployment_data <- barbados_all_data[grep("SL.UEM.TOTL.ZS", barbados_all_data$`Indicator Code`, ignore.case = TRUE), ]
+
+# Transform the data to have two columns: Year and Population
+unemployment_data <- unemployment_data %>%
+  pivot_longer(
+    cols = `1991`:`2023`, # Specify the columns to pivot (years)
+    names_to = "Year",    # New column for the years
+    values_to = "Percentage" # New column for the percentage values
+  ) %>%
+  select(Year, Percentage) # Select only the Year and Percentage columns
+
+
+# TOURISM DATA
+tourism_rows <- barbados_metadata[grep("tourism", barbados_metadata$INDICATOR_NAME, ignore.case = TRUE), ]
+
+# ST.INT.ARVL -> International tourism, number of arrivals
+tourism_data <- barbados_all_data[grep("ST.INT.ARVL", barbados_all_data$`Indicator Code`, ignore.case = TRUE), ]
+
+# Transform the data to have two columns: Year and Population
+tourism_data <- tourism_data %>%
+  pivot_longer(
+    cols = `1995`:`2019`, # Specify the columns to pivot (years)
+    names_to = "Year",    # New column for the years
+    values_to = "Amount" # New column for the amount values
+  ) %>%
+  select(Year, Amount) # Select only the Year and Amount columns
